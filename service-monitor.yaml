@@ -1,0 +1,14 @@
+# ServiceMonitor tells Prometheus to scrape /metrics from our service
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: devops-loveline-servicemonitor
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: devops-loveline
+  endpoints:
+    - port: http  # Matches the name in our Service definition
+      path: /metrics
+      interval: 15s
