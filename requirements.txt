@@ -1,0 +1,2 @@
+# This file lists Python dependencies to install
+flask==3.0.2
