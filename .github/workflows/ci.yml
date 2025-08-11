@@ -1,0 +1,38 @@
+# ci.yml - GitHub Actions pipeline to build and test Docker image
+
+name: CI Pipeline
+
+on:
+  push:        # Run when code is pushed
+    branches:
+      - main
+  pull_request: # Run for PRs too
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Download the repo code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Log in to Docker registry (GitHub Container Registry)
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Step 3: Build and push image
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          tags: ghcr.io/${{ github.repository }}:latest
+
+      # Step 4: Scan image for vulnerabilities
+      - name: Scan image with Trivy
+        uses: aquasecurity/trivy-action@v0.11.2
+        with:
+          image-ref: ghcr.io/${{ github.repository }}:latest
