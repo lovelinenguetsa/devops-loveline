@@ -1,2 +1,3 @@
 # This file lists Python dependencies to install
 flask==3.0.2
+prometheus_client==0.20.0

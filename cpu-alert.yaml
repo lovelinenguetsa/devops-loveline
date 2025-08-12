@@ -1,0 +1,18 @@
+# This alert fires if any container's CPU usage > 80% for 1 minute
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: high-cpu-alert
+  namespace: monitoring
+spec:
+  groups:
+    - name: example.rules
+      rules:
+        - alert: HighCPUUsage
+          expr: rate(container_cpu_usage_seconds_total{container!="",pod!=""}[2m]) * 100 > 0.8
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High CPU usage detected on {{ $labels.pod }}"
+            description: "CPU usage > 80% for pod {{ $labels.pod }} in namespace {{ $labels.namespace }}"
